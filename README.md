@@ -47,7 +47,7 @@ chat-app-capstone/
 Recommended model variables:
 
 ```env
-OPENROUTER_MODEL=qwen/qwen3.6-plus:free
+OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
 OPENROUTER_FALLBACK_MODEL=openrouter/free
 ```
 
@@ -82,7 +82,7 @@ Edit `backend/.env` and fill:
 
 ```env
 OPENROUTER_API_KEY=your_openrouter_key
-OPENROUTER_MODEL=qwen/qwen3.6-plus:free
+OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
 OPENROUTER_FALLBACK_MODEL=openrouter/free
 TAVILY_API_KEY=your_tavily_key
 APP_ENV=development
@@ -167,7 +167,7 @@ Response:
       "snippet": "..."
     }
   ],
-  "model": "qwen/qwen3.6-plus:free",
+  "model": "google/gemma-4-26b-a4b-it:free",
   "used_web_search": true,
   "session_id": "..."
 }

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     frontend_origin: str = Field(default="http://localhost:3000", alias="FRONTEND_ORIGIN")
 
     openrouter_api_key: str = Field(default="", alias="OPENROUTER_API_KEY")
-    openrouter_model: str = Field(default="qwen/qwen3.6-plus:free", alias="OPENROUTER_MODEL")
+    openrouter_model: str = Field(default="google/gemma-4-26b-a4b-it:free", alias="OPENROUTER_MODEL")
     openrouter_fallback_model: str = Field(default="openrouter/free", alias="OPENROUTER_FALLBACK_MODEL")
     openrouter_base_url: str = Field(default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL")
     openrouter_timeout_seconds: float = Field(default=60.0, alias="OPENROUTER_TIMEOUT_SECONDS")
