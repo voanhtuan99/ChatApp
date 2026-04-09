@@ -19,7 +19,7 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="glass flex h-full min-h-[420px] flex-col items-center justify-center rounded-[2rem] p-10 text-center">
+      <div className="glass flex h-full min-h-0 flex-col items-center justify-center rounded-[2rem] p-10 text-center">
         <div className="max-w-lg">
           <p className="text-xs uppercase tracking-[0.3em] text-teal-300/80">Empty state</p>
           <h2 className="mt-4 text-3xl font-semibold text-white">Start with a sharp question.</h2>
@@ -33,7 +33,7 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
   }
 
   return (
-    <div className="glass scrollbar-thin flex h-full min-h-[420px] flex-col gap-5 overflow-y-auto rounded-[2rem] p-5">
+    <div className="glass scrollbar-thin flex h-full min-h-0 flex-col gap-5 overflow-y-auto rounded-[2rem] p-5">
       {messages.map((message) => (
         <MessageBubble key={message.id} message={message} />
       ))}

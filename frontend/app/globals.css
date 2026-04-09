@@ -71,6 +71,15 @@ textarea {
   background: rgba(100, 116, 139, 0.5);
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .glass {
   background: var(--surface);
   border: 1px solid var(--border);

@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle, Send, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface ChatInputProps {
   onSubmit: (message: string) => void;
@@ -19,16 +19,26 @@ export function ChatInput({
   disabled = false,
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const resizeTextarea = (element: HTMLTextAreaElement) => {
+    element.style.height = "auto";
+    const maxHeight = 96;
+    element.style.height = `${Math.min(element.scrollHeight, maxHeight)}px`;
+  };
 
   const submit = () => {
     const nextMessage = message.trim();
     if (!nextMessage || disabled) return;
     onSubmit(nextMessage);
     setMessage("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   };
 
   return (
-    <div className="glass rounded-[2rem] p-4">
+    <div className="glass shrink-0 rounded-[2rem] p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <label className="flex items-center gap-3 text-sm text-slate-300">
           <span
@@ -57,9 +67,14 @@ export function ChatInput({
       </div>
       <div className="flex flex-col gap-3 md:flex-row">
         <textarea
-          className="min-h-28 flex-1 resize-none rounded-[1.5rem] border border-white/10 bg-slate-950/40 px-4 py-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-teal-300/30"
+          ref={textareaRef}
+          rows={1}
+          className="no-scrollbar h-12 max-h-24 min-h-12 flex-1 resize-none overflow-y-auto rounded-[1.5rem] border border-white/10 bg-slate-950/40 px-4 py-3 text-sm leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-teal-300/30"
           disabled={disabled}
-          onChange={(event) => setMessage(event.target.value)}
+          onChange={(event) => {
+            setMessage(event.target.value);
+            resizeTextarea(event.target);
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();

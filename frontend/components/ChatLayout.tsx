@@ -19,6 +19,7 @@ export function ChatLayout() {
     setActiveConversationId,
     createConversation,
     clearConversation,
+    deleteConversation,
     appendMessage,
     replaceLastAssistantMessage,
     hydrated,
@@ -70,17 +71,18 @@ export function ChatLayout() {
   };
 
   return (
-    <div className="mx-auto min-h-screen max-w-[1600px] px-4 py-4 md:px-6 md:py-6">
-      <div className="grid min-h-[calc(100vh-2rem)] gap-4 lg:grid-cols-[300px_minmax(0,1fr)]">
+    <div className="mx-auto min-h-screen max-w-[1600px] px-4 py-4 md:px-6 md:py-6 lg:h-[100dvh] lg:overflow-hidden">
+      <div className="grid gap-4 lg:h-full lg:min-h-0 lg:grid-cols-[300px_minmax(0,1fr)]">
         <Sidebar
           conversations={conversations}
           activeConversationId={activeConversationId}
           onCreateConversation={createConversation}
+          onDeleteConversation={deleteConversation}
           onSelectConversation={setActiveConversationId}
         />
-        <main className="glass flex min-h-[720px] flex-col rounded-[2rem]">
+        <main className="glass flex min-h-[720px] flex-col rounded-[2rem] lg:h-full lg:min-h-0">
           <Header title="Realtime AI Chat" subtitle="Streaming responses with optional web search context" />
-          <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 md:p-6">
             <div className="min-h-0 flex-1">
               <MessageList isStreaming={isStreaming} messages={activeConversation.messages} />
             </div>

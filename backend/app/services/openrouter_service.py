@@ -24,19 +24,22 @@ class OpenRouterService:
         if not self.settings.openrouter_api_key:
             raise ConfigurationError("Missing OPENROUTER_API_KEY.", status_code=500)
 
+        if stream:
+            return self._stream_with_fallback(messages)
+
         request_payload = {
             "model": self.settings.openrouter_model,
             "messages": messages,
             "temperature": 0.4,
-            "stream": stream,
+            "stream": False,
         }
 
         try:
-            return await self._request_completion(request_payload, stream=stream)
+            return await self._request_completion(request_payload, stream=False)
         except ExternalServiceError as primary_error:
             logger.warning("Primary model failed, falling back: %s", primary_error.message)
             request_payload["model"] = self.settings.openrouter_fallback_model
-            return await self._request_completion(request_payload, stream=stream)
+            return await self._request_completion(request_payload, stream=False)
 
     async def _request_completion(
         self,
@@ -63,6 +66,57 @@ class OpenRouterService:
                 return response.json()
         except (httpx.HTTPError, ValueError) as exc:
             raise ExternalServiceError("OpenRouter completion request failed.", status_code=502) from exc
+
+    async def _stream_with_fallback(
+        self,
+        messages: list[dict[str, str]],
+    ) -> AsyncGenerator[str, None]:
+        primary_payload = {
+            "model": self.settings.openrouter_model,
+            "messages": messages,
+            "temperature": 0.4,
+            "stream": True,
+        }
+        fallback_payload = {
+            "model": self.settings.openrouter_fallback_model,
+            "messages": messages,
+            "temperature": 0.4,
+            "stream": True,
+        }
+
+        try:
+            async for token in self._stream_completion_with_probe(primary_payload):
+                yield token
+            return
+        except ExternalServiceError as primary_error:
+            logger.warning("Primary streaming model failed, falling back: %s", primary_error.message)
+
+        async for token in self._stream_completion_with_probe(fallback_payload):
+            yield token
+
+    async def _stream_completion_with_probe(self, payload: dict) -> AsyncGenerator[str, None]:
+        stream = self._stream_completion(
+            headers={
+                "Authorization": f"Bearer {self.settings.openrouter_api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost",
+                "X-Title": "chat-app-capstone",
+            },
+            payload=payload,
+        )
+
+        try:
+            first_chunk = await anext(stream)
+        except StopAsyncIteration:
+            return
+        except ExternalServiceError as exc:
+            raise exc
+        except Exception as exc:
+            raise ExternalServiceError("OpenRouter streaming request failed.", status_code=502) from exc
+
+        yield first_chunk
+        async for chunk in stream:
+            yield chunk
 
     async def _stream_completion(
         self,
@@ -98,5 +152,13 @@ class OpenRouterService:
                         )
                         if delta:
                             yield delta
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 404:
+                model = payload.get("model", "unknown")
+                raise ExternalServiceError(
+                    f"OpenRouter model not found or unavailable: {model}.",
+                    status_code=502,
+                ) from exc
+            raise ExternalServiceError("OpenRouter streaming request failed.", status_code=502) from exc
         except httpx.HTTPError as exc:
             raise ExternalServiceError("OpenRouter streaming request failed.", status_code=502) from exc

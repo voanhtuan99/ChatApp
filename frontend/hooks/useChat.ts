@@ -58,6 +58,21 @@ export function useChat() {
     }));
   };
 
+  const deleteConversation = (conversationId: string) => {
+    setConversations((current) => {
+      const next = current.filter((conversation) => conversation.id !== conversationId);
+      if (next.length === 0) {
+        const fallback = newConversation();
+        setActiveConversationId(fallback.id);
+        return [fallback];
+      }
+      if (activeConversationId === conversationId) {
+        setActiveConversationId(next[0].id);
+      }
+      return next;
+    });
+  };
+
   const appendMessage = (conversationId: string, message: Message) => {
     updateConversation(conversationId, (conversation) => ({
       ...conversation,
@@ -94,6 +109,7 @@ export function useChat() {
     setActiveConversationId,
     createConversation,
     clearConversation,
+    deleteConversation,
     appendMessage,
     replaceLastAssistantMessage,
     hydrated,
