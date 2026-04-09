@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --background: #09111f;
+  --surface: rgba(17, 28, 45, 0.84);
+  --border: rgba(148, 163, 184, 0.18);
+  --text-primary: #edf3ff;
+  --text-secondary: #9fb0ca;
+  --accent: #4fd1c5;
+  --shadow: 0 24px 80px rgba(3, 7, 18, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(79, 209, 197, 0.12), transparent 30%),
+    linear-gradient(180deg, #0b1322 0%, #09111f 55%, #050913 100%);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.prose pre {
+  overflow-x: auto;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgba(2, 6, 23, 0.92);
+}
+
+.prose code {
+  border-radius: 0.4rem;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 0.15rem 0.35rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose h1,
+.prose h2,
+.prose h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.5);
+}
+
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
